@@ -31,10 +31,14 @@ THE SOFTWARE.
 ===============================================
 */
 
+#include <cstdint>
+#include <cstring>
 #include <esp_log.h>
 #include <esp_err.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+#include "driver/i2c_master.h"
+#include "portmacro.h"
 #include "sdkconfig.h"
 
 #include "I2Cdev.h"
@@ -44,23 +48,23 @@ THE SOFTWARE.
 #undef ESP_ERROR_CHECK
 #define ESP_ERROR_CHECK(x)   do { esp_err_t rc = (x); if (rc != ESP_OK) { ESP_LOGE("err", "esp_err_t = %d", rc); /*assert(0 && #x);*/} } while(0);
 
-/** Default constructor.
- */
-I2Cdev::I2Cdev() {
-}
+// /** Default constructor.
+//  */
+// I2Cdev::I2Cdev() {
+// }
 
-/** Initialize I2C0
- */
-void I2Cdev::initialize() {
+// /** Initialize I2C0
+//  */
+// void I2Cdev::initialize() {
 
-}
+// }
 
-/** Enable or disable I2C
- * @param isEnabled true = enable, false = disable
- */
-void I2Cdev::enable(bool isEnabled) {
+// /** Enable or disable I2C
+//  * @param isEnabled true = enable, false = disable
+//  */
+// void I2Cdev::enable(bool isEnabled) {
   
-}
+// }
 
 /** Default timeout value for read operations.
  */
@@ -126,25 +130,25 @@ int8_t I2Cdev::readByte(uint8_t devAddr, uint8_t regAddr, uint8_t *data, uint16_
  * @param timeout Optional read timeout in milliseconds (0 to disable, leave off to use default class value in I2Cdev::readTimeout)
  * @return I2C_TransferReturn_TypeDef http://downloads.energymicro.com/documentation/doxygen/group__I2C.html
  */
-int8_t I2Cdev::readBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length, uint8_t *data, uint16_t timeout) {
-	i2c_cmd_handle_t cmd;
-	SelectRegister(devAddr, regAddr);
+// int8_t I2Cdev::readBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length, uint8_t *data, uint16_t timeout) {
+// 	i2c_cmd_handle_t cmd;
+// 	SelectRegister(devAddr, regAddr);
 
-	cmd = i2c_cmd_link_create();
-	ESP_ERROR_CHECK(i2c_master_start(cmd));
-	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, (devAddr << 1) | I2C_MASTER_READ, 1));
+// 	cmd = i2c_cmd_link_create();
+// 	ESP_ERROR_CHECK(i2c_master_start(cmd));
+// 	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, (devAddr << 1) | I2C_MASTER_READ, 1));
 
-	if(length>1)
-		ESP_ERROR_CHECK(i2c_master_read(cmd, data, length-1, I2C_MASTER_ACK));
+// 	if(length>1)
+// 		ESP_ERROR_CHECK(i2c_master_read(cmd, data, length-1, I2C_MASTER_ACK));
 
-	ESP_ERROR_CHECK(i2c_master_read_byte(cmd, data+length-1, I2C_MASTER_NACK));
+// 	ESP_ERROR_CHECK(i2c_master_read_byte(cmd, data+length-1, I2C_MASTER_NACK));
 
-	ESP_ERROR_CHECK(i2c_master_stop(cmd));
-	ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_NUM, cmd, 1000/portTICK_PERIOD_MS));
-	i2c_cmd_link_delete(cmd);
+// 	ESP_ERROR_CHECK(i2c_master_stop(cmd));
+// 	ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_NUM, cmd, 1000/portTICK_PERIOD_MS));
+// 	i2c_cmd_link_delete(cmd);
 
-	return length;
-}
+// 	return length;
+// }
 
 bool I2Cdev::writeWord(uint8_t devAddr, uint8_t regAddr, uint16_t data){
 
@@ -154,15 +158,15 @@ bool I2Cdev::writeWord(uint8_t devAddr, uint8_t regAddr, uint16_t data){
 }
 
 void I2Cdev::SelectRegister(uint8_t dev, uint8_t reg){
-	i2c_cmd_handle_t cmd;
+	// i2c_cmd_handle_t cmd;
 
-	cmd = i2c_cmd_link_create();
-	ESP_ERROR_CHECK(i2c_master_start(cmd));
-	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, (dev << 1) | I2C_MASTER_WRITE, 1));
-	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, reg, 1));
-	ESP_ERROR_CHECK(i2c_master_stop(cmd));
-	ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_NUM, cmd, 1000/portTICK_PERIOD_MS));
-	i2c_cmd_link_delete(cmd);
+	// cmd = i2c_cmd_link_create();
+	// ESP_ERROR_CHECK(i2c_master_start(cmd));
+	// ESP_ERROR_CHECK(i2c_master_write_byte(cmd, (dev << 1) | I2C_MASTER_WRITE, 1));
+	// ESP_ERROR_CHECK(i2c_master_write_byte(cmd, reg, 1));
+	// ESP_ERROR_CHECK(i2c_master_stop(cmd));
+	// ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_NUM, cmd, 1000/portTICK_PERIOD_MS));
+	// i2c_cmd_link_delete(cmd);
 }
 
 /** write a single bit in an 8-bit device register.
@@ -214,20 +218,20 @@ bool I2Cdev::writeBits(uint8_t devAddr, uint8_t regAddr, uint8_t bitStart, uint8
  * @param data New byte value to write
  * @return Status of operation (true = success)
  */
-bool I2Cdev::writeByte(uint8_t devAddr, uint8_t regAddr, uint8_t data) {
-	i2c_cmd_handle_t cmd;
+// bool I2Cdev::writeByte(uint8_t devAddr, uint8_t regAddr, uint8_t data) {
+// 	i2c_cmd_handle_t cmd;
 
-	cmd = i2c_cmd_link_create();
-	ESP_ERROR_CHECK(i2c_master_start(cmd));
-	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, (devAddr << 1) | I2C_MASTER_WRITE, 1));
-	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, regAddr, 1));
-	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, data, 1));
-	ESP_ERROR_CHECK(i2c_master_stop(cmd));
-	ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_NUM, cmd, 1000/portTICK_PERIOD_MS));
-	i2c_cmd_link_delete(cmd);
+// 	cmd = i2c_cmd_link_create();
+// 	ESP_ERROR_CHECK(i2c_master_start(cmd));
+// 	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, (devAddr << 1) | I2C_MASTER_WRITE, 1));
+// 	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, regAddr, 1));
+// 	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, data, 1));
+// 	ESP_ERROR_CHECK(i2c_master_stop(cmd));
+// 	ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_NUM, cmd, 1000/portTICK_PERIOD_MS));
+// 	i2c_cmd_link_delete(cmd);
 
-	return true;
-}
+// 	return true;
+// }
 
 /** Write single byte to an 8-bit device register.
  * @param devAddr I2C slave device address
@@ -236,20 +240,20 @@ bool I2Cdev::writeByte(uint8_t devAddr, uint8_t regAddr, uint8_t data) {
  * @param data Array of bytes to write
  * @return Status of operation (true = success)
  */
-bool I2Cdev::writeBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length, uint8_t *data){
-	i2c_cmd_handle_t cmd;
+// bool I2Cdev::writeBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length, uint8_t *data){
+// 	i2c_cmd_handle_t cmd;
 
-	cmd = i2c_cmd_link_create();
-	ESP_ERROR_CHECK(i2c_master_start(cmd));
-	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, (devAddr << 1) | I2C_MASTER_WRITE, 1));
-	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, regAddr, 1));
-	ESP_ERROR_CHECK(i2c_master_write(cmd, data, length-1, 0));
-	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, data[length-1], 1));
-	ESP_ERROR_CHECK(i2c_master_stop(cmd));
-	ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_NUM, cmd, 1000/portTICK_PERIOD_MS));
-	i2c_cmd_link_delete(cmd);
-	return true;
-}
+// 	cmd = i2c_cmd_link_create();
+// 	ESP_ERROR_CHECK(i2c_master_start(cmd));
+// 	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, (devAddr << 1) | I2C_MASTER_WRITE, 1));
+// 	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, regAddr, 1));
+// 	ESP_ERROR_CHECK(i2c_master_write(cmd, data, length-1, 0));
+// 	ESP_ERROR_CHECK(i2c_master_write_byte(cmd, data[length-1], 1));
+// 	ESP_ERROR_CHECK(i2c_master_stop(cmd));
+// 	ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_NUM, cmd, 1000/portTICK_PERIOD_MS));
+// 	i2c_cmd_link_delete(cmd);
+// 	return true;
+// }
 
 
 /**
@@ -267,4 +271,64 @@ int8_t I2Cdev::readWord(uint8_t devAddr, uint8_t regAddr, uint16_t *data, uint16
 	return 0;
 }
 
+HardI2Cdev::HardI2Cdev(i2c_master_bus_handle_t bus, uint8_t addr, uint32_t masterFreq) {
+  i2c_device_config_t conf = {};
+  conf.device_address = addr;
+  conf.dev_addr_length = I2C_ADDR_BIT_LEN_7;
+  conf.scl_speed_hz = masterFreq;
 
+  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus, &conf, &m_dev ));
+}
+
+int8_t HardI2Cdev::readBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length,
+                             uint8_t *data, uint16_t timeout) {
+  ESP_ERROR_CHECK(
+      i2c_master_transmit_receive(m_dev, &regAddr, 1, data, length,
+                                  I2Cdev::readTimeout / portTICK_PERIOD_MS));
+  return length;
+}
+
+bool HardI2Cdev::writeBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length,
+                            uint8_t *data) {
+  uint8_t *buf = new uint8_t[length + 1];
+  buf[0] = regAddr;
+  memcpy(&buf[1], data, length);
+  ESP_ERROR_CHECK(i2c_master_transmit(
+      m_dev, buf, length + 1, I2Cdev::readTimeout / portTICK_PERIOD_MS));
+  return true;
+}
+
+bool HardI2Cdev::writeByte(uint8_t devAddr, uint8_t regAddr, uint8_t data) {
+  uint8_t buf[] = {regAddr, data};
+  ESP_ERROR_CHECK(i2c_master_transmit(
+      m_dev, buf, 2, I2Cdev::readTimeout / portTICK_PERIOD_MS));
+  return true;
+}
+
+HardI2Cdev::~HardI2Cdev() {
+  ESP_ERROR_CHECK(i2c_master_bus_rm_device(m_dev));
+}
+
+
+int8_t SoftI2Cdev::readBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length,
+                             uint8_t *data, uint16_t timeout) {
+  ESP_ERROR_CHECK(soft_i2c_master_write_read(m_bus, m_deviceAddr, &regAddr, 1,
+                                             data, length));
+  return length;
+}
+
+bool SoftI2Cdev::writeBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length,
+                            uint8_t *data) {
+  uint8_t *buf = new uint8_t[length + 1];
+  buf[0] = regAddr;
+  memcpy(&buf[1], data, length);
+  ESP_ERROR_CHECK(soft_i2c_master_write(m_bus, m_deviceAddr, buf, length + 1));
+  
+  return true;
+}
+
+bool SoftI2Cdev::writeByte(uint8_t devAddr, uint8_t regAddr, uint8_t data) {
+  uint8_t buf[] = {regAddr, data};
+  ESP_ERROR_CHECK(soft_i2c_master_write(m_bus, m_deviceAddr, buf, 2));
+  return true;
+}

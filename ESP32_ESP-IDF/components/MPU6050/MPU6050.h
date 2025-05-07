@@ -37,8 +37,10 @@ THE SOFTWARE.
 #ifndef _MPU6050_H_
 #define _MPU6050_H_
 
+#include "driver/i2c_types.h"
 #include "helper_3dmath.h"
 #include "I2Cdev.h"
+#include "soft_i2c_master.h"
 
 // supporting link:  http://forum.arduino.cc/index.php?&topic=143444.msg1079517#msg1079517
 // also: http://forum.arduino.cc/index.php?&topic=141571.msg1062899#msg1062899s
@@ -434,8 +436,16 @@ THE SOFTWARE.
 // note: DMP code memory blocks defined at end of header file
 
 class MPU6050 {
-    public:
+private:
+        I2Cdev* m_i2c;
+
+public:
+        MPU6050(i2c_master_bus_handle_t masterBus, uint32_t masterFreq, bool useAlternativeAddr);
+#ifndef CONFIG_IDF_TARGET_ESP32
+        MPU6050(soft_i2c_master_bus_t masterBus, bool useAlternativeAddr);
+#endif
         MPU6050();
+        ~MPU6050();
         MPU6050(uint8_t address);
 
         void ReadRegister(uint8_t reg, uint8_t *data, uint8_t len);
